@@ -1,12 +1,5 @@
 fileFormatVersion: 2
-guid: 88a3aae37a7c3ed4ab7aeb2e1d952f31
-AssetOrigin:
-  serializedVersion: 1
-  productId: 255996
-  packageName: Exploding Bottles
-  packageVersion: 1.0
-  assetPath: Assets/Bottle/Models/Bottle.fbx
-  uploadId: 587898
+guid: fb21d5608581f44078c3cdc44460e030
 ModelImporter:
   serializedVersion: 22200
   internalIDToNameTable: []
