@@ -1,13 +1,17 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
-using UnityEngine.XR.ARFoundation; // include xr library
+using UnityEngine.XR.ARFoundation;
 
 public class ImageTracker : MonoBehaviour
 {
     [SerializeField]
-    ARTrackedImageManager m_TrackedImageManager; 
-    public GameObject Bottle; // Prefab you want to appear on marker image
+    ARTrackedImageManager m_TrackedImageManager;
+
+    public GameObject Bottle; // Prefab to appear on marker image
+
+    public GameObject[] rockInstances; // Similar to your rocks
+    private int counter = 0;
 
     void OnEnable() => m_TrackedImageManager.trackedImagesChanged += OnChanged;
 
@@ -20,19 +24,28 @@ public class ImageTracker : MonoBehaviour
         foreach (ARTrackedImage newImage in eventArgs.added)
         {
             Debug.Log("Found image");
-            GameObject newObject = GameObject.Instantiate(Bottle);
+
+            // Instantiate the bottle prefab
+            GameObject newObject = Instantiate(Bottle);
+
+            // Parent it to the marker so it follows the image
             newObject.transform.SetParent(newImage.transform, false);
 
-            // Make bottle smaller
-            newObject.transform.localScale = new Vector3(0.5f, 0.5f, 0.5f); // Adjust scale as needed
+            // Position offset - move a bit forward relative to the marker (e.g., Z = 0.3m)
+newObject.transform.localPosition = new Vector3(0.1f, 0f, 0.05f);
+            // Scale it so it's 0.17 meters long (assuming uniform scale, adjust as needed)
+            newObject.transform.localScale = Vector3.one * 0.17f;
 
-            // Rotate bottle horizontally (lie it down)
-            newObject.transform.localRotation = Quaternion.Euler(90f, 0f, 0f);
-
-            // Move bottle forward a bit on the Z-axis but keep it centered (no offset on X)
-            newObject.transform.localPosition = new Vector3(0f, 0f, 0.2f); // Adjust Z (0.2f) to how far "in front" you want it
-            
             source.Play();
+
+            // OPTIONAL: Example of how you can also randomly spawn rock instances
+            Vector3 randomPos = new Vector3(Random.Range(-10.0f, 5.0f), Random.Range(0f, 10.0f), Random.Range(2.0f, 10.0f));
+            if (counter >= rockInstances.Length)
+            {
+                counter = 0;
+            }
+            Instantiate(rockInstances[counter], randomPos, Random.rotation);
+            counter++;
         }
     }
 }
