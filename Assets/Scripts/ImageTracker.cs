@@ -10,8 +10,6 @@ public class ImageTracker : MonoBehaviour
 
     public GameObject Bottle; // Prefab to appear on marker image
 
-    public GameObject[] rockInstances; // Similar to your rocks
-    private int counter = 0;
 
     void OnEnable() => m_TrackedImageManager.trackedImagesChanged += OnChanged;
 
@@ -32,20 +30,14 @@ public class ImageTracker : MonoBehaviour
             newObject.transform.SetParent(newImage.transform, false);
 
             // Position offset - move a bit forward relative to the marker (e.g., Z = 0.3m)
-newObject.transform.localPosition = new Vector3(0.1f, 0f, 0.05f);
+            //newObject.transform.localPosition = new Vector3(0.1f, 0f, 2f);
             // Scale it so it's 0.17 meters long (assuming uniform scale, adjust as needed)
-            newObject.transform.localScale = Vector3.one * 0.17f;
+            //newObject.transform.localScale = Vector3.one * 0.17f;
 
-            source.Play();
+            //source.Play();
 
             // OPTIONAL: Example of how you can also randomly spawn rock instances
-            Vector3 randomPos = new Vector3(Random.Range(-10.0f, 5.0f), Random.Range(0f, 10.0f), Random.Range(2.0f, 10.0f));
-            if (counter >= rockInstances.Length)
-            {
-                counter = 0;
-            }
-            Instantiate(rockInstances[counter], randomPos, Random.rotation);
-            counter++;
+
         }
     }
 }
