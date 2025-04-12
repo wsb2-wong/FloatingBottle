@@ -152,7 +152,7 @@ GameObject:
   m_Component:
   - component: {fileID: 3652968871906106245}
   m_Layer: 0
-  m_Name: 3DEnvironment 1
+  m_Name: EnvironmentrAsset
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -291,17 +291,17 @@ PrefabInstance:
     - target: {fileID: 4360691434965607989, guid: 1387d66bee04e44448841d4ba6b476c1,
         type: 3}
       propertyPath: m_LocalPosition.x
-      value: -87.8
+      value: -53.4
       objectReference: {fileID: 0}
     - target: {fileID: 4360691434965607989, guid: 1387d66bee04e44448841d4ba6b476c1,
         type: 3}
       propertyPath: m_LocalPosition.y
-      value: -125.4
+      value: -133.4
       objectReference: {fileID: 0}
     - target: {fileID: 4360691434965607989, guid: 1387d66bee04e44448841d4ba6b476c1,
         type: 3}
       propertyPath: m_LocalPosition.z
-      value: -154
+      value: -217.8
       objectReference: {fileID: 0}
     - target: {fileID: 4360691434965607989, guid: 1387d66bee04e44448841d4ba6b476c1,
         type: 3}
@@ -2025,17 +2025,17 @@ PrefabInstance:
     - target: {fileID: 5234862837614820413, guid: 06fd7de43018a45e0ac059b4ae7f6f46,
         type: 3}
       propertyPath: m_LocalScale.x
-      value: 1517.8718
+      value: 1853.985
       objectReference: {fileID: 0}
     - target: {fileID: 5234862837614820413, guid: 06fd7de43018a45e0ac059b4ae7f6f46,
         type: 3}
       propertyPath: m_LocalScale.y
-      value: 1517.8718
+      value: 1545.8898
       objectReference: {fileID: 0}
     - target: {fileID: 5234862837614820413, guid: 06fd7de43018a45e0ac059b4ae7f6f46,
         type: 3}
       propertyPath: m_LocalScale.z
-      value: 1517.8718
+      value: 1853.985
       objectReference: {fileID: 0}
     - target: {fileID: 5234862837614820413, guid: 06fd7de43018a45e0ac059b4ae7f6f46,
         type: 3}

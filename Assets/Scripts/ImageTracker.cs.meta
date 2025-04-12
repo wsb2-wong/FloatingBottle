@@ -1,2 +1,13 @@
 fileFormatVersion: 2
 guid: 936a2e31c2419426899785ea200f04cc
+MonoImporter:
+  externalObjects: {}
+  serializedVersion: 2
+  defaultReferences:
+  - m_TrackedImageManager: {instanceID: 0}
+  - Bottle: {instanceID: 0}
+  executionOrder: 0
+  icon: {instanceID: 0}
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
