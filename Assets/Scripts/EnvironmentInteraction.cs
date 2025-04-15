@@ -3,17 +3,28 @@ using UnityEngine;
 public class EnvironmentInteraction : MonoBehaviour
 {
     [Header("Memory Reveal")]
-    public GameObject swissPrefab;       // Drag the Swiss memory here
-    public AudioSource audioSource;      // Optional audio
+    public GameObject swissPrefab;       // Assign your Swiss memory prefab
+    public AudioSource audioSource;      // Optional audio when bottle is tapped
+    public GameObject annotationTitle;   // The "annotation/title" text to hide on tap
 
     private float initialTouchDistance;
     private Vector3 initialScale;
 
-    private void Update()
+    private void Start()
     {
-        HandleTouchGestures();
+        // When BottleD appears (e.g., on image scan), show the title
+        if (annotationTitle != null)
+        {
+            annotationTitle.SetActive(true);
+        }
     }
 
+    private void Update()
+    {
+        HandlePinchToZoom();
+    }
+
+    // Called when the bottle is tapped
     public void selected()
     {
         Debug.Log("Bottle selected");
@@ -23,9 +34,13 @@ public class EnvironmentInteraction : MonoBehaviour
 
         if (audioSource != null)
             audioSource.Play();
+
+        if (annotationTitle != null)
+            annotationTitle.SetActive(false);  // Hide the title when tapped
     }
 
-    void HandleTouchGestures()
+    // Zoom using two-finger pinch
+    void HandlePinchToZoom()
     {
         if (Input.touchCount == 2)
         {
@@ -43,17 +58,6 @@ public class EnvironmentInteraction : MonoBehaviour
             {
                 float scaleFactor = currentDistance / initialTouchDistance;
                 transform.localScale = initialScale * scaleFactor;
-            }
-        }
-
-        if (Input.touchCount == 1)
-        {
-            Touch t = Input.GetTouch(0);
-
-            if (t.phase == TouchPhase.Moved)
-            {
-                float rotateSpeed = 0.2f;
-                transform.Rotate(0, -t.deltaPosition.x * rotateSpeed, 0, Space.World);
             }
         }
     }
