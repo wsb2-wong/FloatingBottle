@@ -1,35 +1,61 @@
 using UnityEngine;
+using UnityEngine.UI;
 using System.Collections;
 
 public class EnvironmentInteraction : MonoBehaviour
 {
     [Header("Memory Reveal")]
-    public GameObject swissPrefab;       // Assign your Swiss memory prefab
-    public AudioSource audioSource;      // Optional audio when bottle is tapped
-    public GameObject annotationTitle;   // The "annotation/title" text to hide on tap
-    public float fadeDuration = 1f;      // Duration of the fade in seconds
+    public GameObject swissPrefab;
+    public AudioSource audioSource;
+    public GameObject annotationTitle;
+
+    [Header("Canvas 1 UI")]
+    public GameObject explainText;
+    public Button sendToPaperPlaneButton;
+
+    [Header("Canvas 2 UI")]
+    public GameObject canvas2;
+    public Button revealFishButton;
+    public GameObject paperPlaneAsset;
+
+    [Header("Final Reveal")]
+    public GameObject finalPoemText;
+    public GameObject fishAsset;
+
+    [Header("Zoom Settings")]
+    public float minScale = 1f;
+    public float fadeDuration = 1f;
 
     private float initialTouchDistance;
     private Vector3 initialScale;
     private CanvasGroup annotationCanvasGroup;
 
-    private void Start()
+    void Start()
     {
+        // Setup canvas group for annotation fade
         if (annotationTitle != null)
         {
-            // Ensure there's a CanvasGroup component for fading
-            annotationCanvasGroup = annotationTitle.GetComponent<CanvasGroup>();
-            if (annotationCanvasGroup == null)
-            {
-                annotationCanvasGroup = annotationTitle.AddComponent<CanvasGroup>();
-            }
-
+            annotationCanvasGroup = annotationTitle.GetComponent<CanvasGroup>() ?? annotationTitle.AddComponent<CanvasGroup>();
             annotationCanvasGroup.alpha = 1f;
             annotationTitle.SetActive(true);
         }
+
+        // Initial UI visibility
+        explainText?.SetActive(false);
+        canvas2?.SetActive(false);
+        paperPlaneAsset?.SetActive(false);
+        fishAsset?.SetActive(false);
+        finalPoemText?.SetActive(false);
+
+        // Button listeners
+        if (sendToPaperPlaneButton != null)
+            sendToPaperPlaneButton.onClick.AddListener(OnSendToPaperPlanePressed);
+
+        if (revealFishButton != null)
+            revealFishButton.onClick.AddListener(OnRevealFishPressed);
     }
 
-    private void Update()
+    void Update()
     {
         HandlePinchToZoom();
     }
@@ -38,17 +64,16 @@ public class EnvironmentInteraction : MonoBehaviour
     {
         Debug.Log("Bottle selected");
 
-        if (swissPrefab != null)
-            swissPrefab.SetActive(true);
-
-        if (audioSource != null)
-            audioSource.Play();
+        swissPrefab?.SetActive(true);
+        audioSource?.Play();
 
         if (annotationCanvasGroup != null)
             StartCoroutine(FadeOutAnnotation());
+
+        StartCoroutine(ShowCanvas1AfterDelay(1f));
     }
 
-    private IEnumerator FadeOutAnnotation()
+    IEnumerator FadeOutAnnotation()
     {
         float elapsed = 0f;
         float startAlpha = annotationCanvasGroup.alpha;
@@ -61,7 +86,35 @@ public class EnvironmentInteraction : MonoBehaviour
         }
 
         annotationCanvasGroup.alpha = 0f;
-        annotationTitle.SetActive(false); // Fully disable after fade-out
+        annotationTitle?.SetActive(false);
+    }
+
+    IEnumerator ShowCanvas1AfterDelay(float delay)
+    {
+        yield return new WaitForSeconds(delay);
+        explainText?.SetActive(true);
+        sendToPaperPlaneButton?.gameObject.SetActive(true);
+    }
+
+    void OnSendToPaperPlanePressed()
+    {
+        // Hide canvas 1
+        sendToPaperPlaneButton?.transform.parent?.gameObject.SetActive(false);
+        explainText?.SetActive(false);
+
+        // Show canvas 2 with plane
+        canvas2?.SetActive(true);
+        paperPlaneAsset?.SetActive(true);
+    }
+
+    void OnRevealFishPressed()
+    {
+        // Hide canvas 2
+        canvas2?.SetActive(false);
+
+        // Show final poem with fish
+        fishAsset?.SetActive(true);
+        finalPoemText?.SetActive(true);
     }
 
     void HandlePinchToZoom()
@@ -81,7 +134,8 @@ public class EnvironmentInteraction : MonoBehaviour
             else
             {
                 float scaleFactor = currentDistance / initialTouchDistance;
-                transform.localScale = initialScale * scaleFactor;
+                float clampedFactor = Mathf.Max(scaleFactor, minScale / initialScale.x);
+                transform.localScale = initialScale * clampedFactor;
             }
         }
     }
