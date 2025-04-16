@@ -1,4 +1,5 @@
 using UnityEngine;
+using System.Collections;
 
 public class EnvironmentInteraction : MonoBehaviour
 {
@@ -6,15 +7,24 @@ public class EnvironmentInteraction : MonoBehaviour
     public GameObject swissPrefab;       // Assign your Swiss memory prefab
     public AudioSource audioSource;      // Optional audio when bottle is tapped
     public GameObject annotationTitle;   // The "annotation/title" text to hide on tap
+    public float fadeDuration = 1f;      // Duration of the fade in seconds
 
     private float initialTouchDistance;
     private Vector3 initialScale;
+    private CanvasGroup annotationCanvasGroup;
 
     private void Start()
     {
-        // When BottleD appears (e.g., on image scan), show the title
         if (annotationTitle != null)
         {
+            // Ensure there's a CanvasGroup component for fading
+            annotationCanvasGroup = annotationTitle.GetComponent<CanvasGroup>();
+            if (annotationCanvasGroup == null)
+            {
+                annotationCanvasGroup = annotationTitle.AddComponent<CanvasGroup>();
+            }
+
+            annotationCanvasGroup.alpha = 1f;
             annotationTitle.SetActive(true);
         }
     }
@@ -24,7 +34,6 @@ public class EnvironmentInteraction : MonoBehaviour
         HandlePinchToZoom();
     }
 
-    // Called when the bottle is tapped
     public void selected()
     {
         Debug.Log("Bottle selected");
@@ -35,11 +44,26 @@ public class EnvironmentInteraction : MonoBehaviour
         if (audioSource != null)
             audioSource.Play();
 
-        if (annotationTitle != null)
-            annotationTitle.SetActive(false);  // Hide the title when tapped
+        if (annotationCanvasGroup != null)
+            StartCoroutine(FadeOutAnnotation());
     }
 
-    // Zoom using two-finger pinch
+    private IEnumerator FadeOutAnnotation()
+    {
+        float elapsed = 0f;
+        float startAlpha = annotationCanvasGroup.alpha;
+
+        while (elapsed < fadeDuration)
+        {
+            elapsed += Time.deltaTime;
+            annotationCanvasGroup.alpha = Mathf.Lerp(startAlpha, 0f, elapsed / fadeDuration);
+            yield return null;
+        }
+
+        annotationCanvasGroup.alpha = 0f;
+        annotationTitle.SetActive(false); // Fully disable after fade-out
+    }
+
     void HandlePinchToZoom()
     {
         if (Input.touchCount == 2)
