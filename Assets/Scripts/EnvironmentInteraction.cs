@@ -29,6 +29,13 @@ public class EnvironmentInteraction : MonoBehaviour
     public GameObject memoryAsset;
     public GameObject bottleD;
 
+    [Header("Star Reveal")]
+    public GameObject canvasStar;
+    public Button revealStarButton;
+    public GameObject swissStar;
+    public AudioSource memorySave;
+    public ParticleSystem starParticles;
+
     [Header("Sound Effects")]
     public AudioSource buttonTapSound;
 
@@ -59,6 +66,9 @@ public class EnvironmentInteraction : MonoBehaviour
         finalPoemText?.SetActive(false);
         canvasMemory?.SetActive(false);
         memoryAsset?.SetActive(false);
+        canvasStar?.SetActive(false);
+        swissStar?.SetActive(false);
+        starParticles?.gameObject.SetActive(false);
 
         // Ambient audio setup
         if (ambientSound != null)
@@ -71,6 +81,7 @@ public class EnvironmentInteraction : MonoBehaviour
         sendToPaperPlaneButton?.onClick.AddListener(OnSendToPaperPlanePressed);
         revealFishButton?.onClick.AddListener(OnRevealFishPressed);
         revealMemoryButton?.onClick.AddListener(OnRevealMemoryPressed);
+        revealStarButton?.onClick.AddListener(OnRevealStarPressed);
     }
 
     void Update()
@@ -146,11 +157,9 @@ public class EnvironmentInteraction : MonoBehaviour
         buttonTapSound?.Play();
 
         canvas2?.SetActive(false);
-
         fishAsset?.SetActive(true);
         finalPoemText?.SetActive(true);
 
-        // Show memory canvas
         canvasMemory?.SetActive(true);
     }
 
@@ -166,9 +175,25 @@ public class EnvironmentInteraction : MonoBehaviour
         finalPoemText?.SetActive(false);
         canvasMemory?.SetActive(false);
 
-        // Show memory
         memoryAsset?.SetActive(true);
-        bottleD?.SetActive(true);  // Just to ensure it's still visible
+        bottleD?.SetActive(true);
+
+        // Show canvasStar with button
+        canvasStar?.SetActive(true);
+        revealStarButton?.gameObject.SetActive(true);
+    }
+
+    void OnRevealStarPressed()
+    {
+        buttonTapSound?.Play();
+
+        swissStar?.SetActive(true);
+        if (memorySave != null) memorySave.Play();
+        if (starParticles != null)
+        {
+            starParticles.gameObject.SetActive(true);
+            starParticles.Play();
+        }
     }
 
     void HandlePinchToZoom()
