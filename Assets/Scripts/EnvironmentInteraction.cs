@@ -6,8 +6,8 @@ public class EnvironmentInteraction : MonoBehaviour
 {
     [Header("Memory Reveal")]
     public GameObject swissPrefab;
-    public AudioSource bottleClickSound;       // Already working
-    public AudioSource ambientSound;           // New: Loops & fades in
+    public AudioSource bottleClickSound;
+    public AudioSource ambientSound;
     public GameObject annotationTitle;
 
     [Header("Canvas 1 UI")]
@@ -23,13 +23,19 @@ public class EnvironmentInteraction : MonoBehaviour
     public GameObject finalPoemText;
     public GameObject fishAsset;
 
+    [Header("Memory UI")]
+    public GameObject canvasMemory;
+    public Button revealMemoryButton;
+    public GameObject memoryAsset;
+    public GameObject bottleD;
+
     [Header("Sound Effects")]
-    public AudioSource buttonTapSound;         // New: shared tap sound
+    public AudioSource buttonTapSound;
 
     [Header("Zoom Settings")]
     public float minScale = 1f;
     public float fadeDuration = 1f;
-    public float ambientFadeInDuration = 2f;   // Smooth fade-in for ambient
+    public float ambientFadeInDuration = 2f;
 
     private float initialTouchDistance;
     private Vector3 initialScale;
@@ -51,20 +57,20 @@ public class EnvironmentInteraction : MonoBehaviour
         paperPlaneAsset?.SetActive(false);
         fishAsset?.SetActive(false);
         finalPoemText?.SetActive(false);
+        canvasMemory?.SetActive(false);
+        memoryAsset?.SetActive(false);
 
         // Ambient audio setup
         if (ambientSound != null)
         {
             ambientSound.loop = true;
-            ambientSound.volume = 0f;  // Start silent
+            ambientSound.volume = 0f;
         }
 
         // Button listeners
-        if (sendToPaperPlaneButton != null)
-            sendToPaperPlaneButton.onClick.AddListener(OnSendToPaperPlanePressed);
-
-        if (revealFishButton != null)
-            revealFishButton.onClick.AddListener(OnRevealFishPressed);
+        sendToPaperPlaneButton?.onClick.AddListener(OnSendToPaperPlanePressed);
+        revealFishButton?.onClick.AddListener(OnRevealFishPressed);
+        revealMemoryButton?.onClick.AddListener(OnRevealMemoryPressed);
     }
 
     void Update()
@@ -128,11 +134,9 @@ public class EnvironmentInteraction : MonoBehaviour
     {
         buttonTapSound?.Play();
 
-        // Hide canvas 1
         sendToPaperPlaneButton?.transform.parent?.gameObject.SetActive(false);
         explainText?.SetActive(false);
 
-        // Show canvas 2 with plane
         canvas2?.SetActive(true);
         paperPlaneAsset?.SetActive(true);
     }
@@ -141,12 +145,30 @@ public class EnvironmentInteraction : MonoBehaviour
     {
         buttonTapSound?.Play();
 
-        // Hide canvas 2
         canvas2?.SetActive(false);
 
-        // Show final poem with fish
         fishAsset?.SetActive(true);
         finalPoemText?.SetActive(true);
+
+        // Show memory canvas
+        canvasMemory?.SetActive(true);
+    }
+
+    void OnRevealMemoryPressed()
+    {
+        buttonTapSound?.Play();
+
+        // Hide all elements except the bottle
+        swissPrefab?.SetActive(false);
+        annotationTitle?.SetActive(false);
+        paperPlaneAsset?.SetActive(false);
+        fishAsset?.SetActive(false);
+        finalPoemText?.SetActive(false);
+        canvasMemory?.SetActive(false);
+
+        // Show memory
+        memoryAsset?.SetActive(true);
+        bottleD?.SetActive(true);  // Just to ensure it's still visible
     }
 
     void HandlePinchToZoom()
