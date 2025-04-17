@@ -6,7 +6,8 @@ public class EnvironmentInteraction : MonoBehaviour
 {
     [Header("Memory Reveal")]
     public GameObject swissPrefab;
-    public AudioSource audioSource;
+    public AudioSource bottleClickSound;       // Already working
+    public AudioSource ambientSound;           // New: Loops & fades in
     public GameObject annotationTitle;
 
     [Header("Canvas 1 UI")]
@@ -22,9 +23,13 @@ public class EnvironmentInteraction : MonoBehaviour
     public GameObject finalPoemText;
     public GameObject fishAsset;
 
+    [Header("Sound Effects")]
+    public AudioSource buttonTapSound;         // New: shared tap sound
+
     [Header("Zoom Settings")]
     public float minScale = 1f;
     public float fadeDuration = 1f;
+    public float ambientFadeInDuration = 2f;   // Smooth fade-in for ambient
 
     private float initialTouchDistance;
     private Vector3 initialScale;
@@ -47,6 +52,13 @@ public class EnvironmentInteraction : MonoBehaviour
         fishAsset?.SetActive(false);
         finalPoemText?.SetActive(false);
 
+        // Ambient audio setup
+        if (ambientSound != null)
+        {
+            ambientSound.loop = true;
+            ambientSound.volume = 0f;  // Start silent
+        }
+
         // Button listeners
         if (sendToPaperPlaneButton != null)
             sendToPaperPlaneButton.onClick.AddListener(OnSendToPaperPlanePressed);
@@ -65,12 +77,28 @@ public class EnvironmentInteraction : MonoBehaviour
         Debug.Log("Bottle selected");
 
         swissPrefab?.SetActive(true);
-        audioSource?.Play();
+        bottleClickSound?.Play();
+        if (ambientSound != null) StartCoroutine(FadeInAmbient());
 
         if (annotationCanvasGroup != null)
             StartCoroutine(FadeOutAnnotation());
 
         StartCoroutine(ShowCanvas1AfterDelay(1f));
+    }
+
+    IEnumerator FadeInAmbient()
+    {
+        ambientSound.Play();
+        float elapsed = 0f;
+
+        while (elapsed < ambientFadeInDuration)
+        {
+            elapsed += Time.deltaTime;
+            ambientSound.volume = Mathf.Lerp(0f, 1f, elapsed / ambientFadeInDuration);
+            yield return null;
+        }
+
+        ambientSound.volume = 1f;
     }
 
     IEnumerator FadeOutAnnotation()
@@ -98,6 +126,8 @@ public class EnvironmentInteraction : MonoBehaviour
 
     void OnSendToPaperPlanePressed()
     {
+        buttonTapSound?.Play();
+
         // Hide canvas 1
         sendToPaperPlaneButton?.transform.parent?.gameObject.SetActive(false);
         explainText?.SetActive(false);
@@ -109,6 +139,8 @@ public class EnvironmentInteraction : MonoBehaviour
 
     void OnRevealFishPressed()
     {
+        buttonTapSound?.Play();
+
         // Hide canvas 2
         canvas2?.SetActive(false);
 
