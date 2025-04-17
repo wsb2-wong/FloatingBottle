@@ -36,6 +36,12 @@ public class EnvironmentInteraction : MonoBehaviour
     public AudioSource memorySave;
     public ParticleSystem starParticles;
 
+    [Header("Shake to Reveal")]
+    public ParticleSystem snowParticles;
+    public float shakeThreshold = 2.0f;
+    private Vector3 lastAcceleration;
+    private bool hasShaken = false;
+
     [Header("Sound Effects")]
     public AudioSource buttonTapSound;
 
@@ -50,7 +56,6 @@ public class EnvironmentInteraction : MonoBehaviour
 
     void Start()
     {
-        // Setup canvas group for annotation fade
         if (annotationTitle != null)
         {
             annotationCanvasGroup = annotationTitle.GetComponent<CanvasGroup>() ?? annotationTitle.AddComponent<CanvasGroup>();
@@ -58,7 +63,7 @@ public class EnvironmentInteraction : MonoBehaviour
             annotationTitle.SetActive(true);
         }
 
-        // Initial UI visibility
+        // Initial UI state
         explainText?.SetActive(false);
         canvas2?.SetActive(false);
         paperPlaneAsset?.SetActive(false);
@@ -69,24 +74,28 @@ public class EnvironmentInteraction : MonoBehaviour
         canvasStar?.SetActive(false);
         swissStar?.SetActive(false);
         starParticles?.gameObject.SetActive(false);
+        snowParticles?.gameObject.SetActive(false);
 
-        // Ambient audio setup
         if (ambientSound != null)
         {
             ambientSound.loop = true;
             ambientSound.volume = 0f;
         }
 
-        // Button listeners
+        // Set up listeners
         sendToPaperPlaneButton?.onClick.AddListener(OnSendToPaperPlanePressed);
         revealFishButton?.onClick.AddListener(OnRevealFishPressed);
         revealMemoryButton?.onClick.AddListener(OnRevealMemoryPressed);
         revealStarButton?.onClick.AddListener(OnRevealStarPressed);
+
+        // Initialize shake detection
+        lastAcceleration = Input.acceleration;
     }
 
     void Update()
     {
         HandlePinchToZoom();
+        CheckShakeGesture();
     }
 
     public void selected()
@@ -167,7 +176,6 @@ public class EnvironmentInteraction : MonoBehaviour
     {
         buttonTapSound?.Play();
 
-        // Hide all elements except the bottle
         swissPrefab?.SetActive(false);
         annotationTitle?.SetActive(false);
         paperPlaneAsset?.SetActive(false);
@@ -178,9 +186,10 @@ public class EnvironmentInteraction : MonoBehaviour
         memoryAsset?.SetActive(true);
         bottleD?.SetActive(true);
 
-        // Show canvasStar with button
         canvasStar?.SetActive(true);
         revealStarButton?.gameObject.SetActive(true);
+
+        hasShaken = false; // Reset shake trigger
     }
 
     void OnRevealStarPressed()
@@ -188,11 +197,35 @@ public class EnvironmentInteraction : MonoBehaviour
         buttonTapSound?.Play();
 
         swissStar?.SetActive(true);
-        if (memorySave != null) memorySave.Play();
+        memorySave?.Play();
         if (starParticles != null)
         {
             starParticles.gameObject.SetActive(true);
             starParticles.Play();
+        }
+    }
+
+    void CheckShakeGesture()
+    {
+        Vector3 acceleration = Input.acceleration;
+        float deltaAcceleration = (acceleration - lastAcceleration).magnitude;
+
+        if (deltaAcceleration > shakeThreshold && !hasShaken)
+        {
+            Debug.Log("Shake detected!");
+            ShowSnowParticles();
+            hasShaken = true;
+        }
+
+        lastAcceleration = acceleration;
+    }
+
+    void ShowSnowParticles()
+    {
+        if (snowParticles != null)
+        {
+            snowParticles.gameObject.SetActive(true);
+            snowParticles.Play();
         }
     }
 
