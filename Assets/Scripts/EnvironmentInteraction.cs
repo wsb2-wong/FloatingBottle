@@ -6,9 +6,14 @@ public class EnvironmentInteraction : MonoBehaviour
 {
     [Header("Memory Reveal")]
     public GameObject swissPrefab;
+    public GameObject swiss2Prefab; // ✅ NEW
     public AudioSource bottleClickSound;
     public AudioSource ambientSound;
     public GameObject annotationTitle;
+
+    [Header("Day/Night Toggle")] // ✅ NEW
+    public Button nightButton;
+    public Button dayButton;
 
     [Header("Canvas 1 UI")]
     public GameObject explainText;
@@ -88,8 +93,14 @@ public class EnvironmentInteraction : MonoBehaviour
         revealMemoryButton?.onClick.AddListener(OnRevealMemoryPressed);
         revealStarButton?.onClick.AddListener(OnRevealStarPressed);
 
+        nightButton?.onClick.AddListener(OnNightButtonPressed); // ✅ NEW
+        dayButton?.onClick.AddListener(OnDayButtonPressed);     // ✅ NEW
+
         // Initialize shake detection
         lastAcceleration = Input.acceleration;
+
+        // Initial state for day/night
+        swiss2Prefab?.SetActive(false); // ✅ Make sure Swiss2 is hidden initially
     }
 
     void Update()
@@ -250,5 +261,21 @@ public class EnvironmentInteraction : MonoBehaviour
                 transform.localScale = initialScale * clampedFactor;
             }
         }
+    }
+
+    // ✅ NEW: Night Button Function
+    void OnNightButtonPressed()
+    {
+        buttonTapSound?.Play();
+        swissPrefab?.SetActive(false);
+        swiss2Prefab?.SetActive(true);
+    }
+
+    // ✅ NEW: Day Button Function
+    void OnDayButtonPressed()
+    {
+        buttonTapSound?.Play();
+        swiss2Prefab?.SetActive(false);
+        swissPrefab?.SetActive(true);
     }
 }
